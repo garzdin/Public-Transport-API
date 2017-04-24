@@ -1,0 +1,173 @@
+GET - http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/routes
+Headers:
+  - eurogps.eu.sid: 0e8f8d7a4cc333e2bbbf1b8f64bf4aae5cffc45b1ce44795
+Response:
+[
+  {
+    "id": 3080,
+    "lineId": 51,
+    "direction": "Дружба",
+    "name": "Сторгозия - Първа Клинична База - Дружба",
+    "begin": 1434443435,
+    "end": 0,
+    "stopIds": [
+      1909,
+      1926,
+      1887,
+      1803,
+      1809,
+      1811,
+      1815,
+      1820,
+      1824,
+      1826,
+      1828,
+      1830,
+      1853,
+      1851,
+      1849,
+      1847,
+      1845,
+      1842
+    ],
+    "stopOffsets": [
+      0,
+      120,
+      300,
+      420,
+      540,
+      600,
+      780,
+      840,
+      1020,
+      1080,
+      1140,
+      1260,
+      1320,
+      1440,
+      1500,
+      1560,
+      1680,
+      1800
+    ]
+  }
+]
+
+GET - http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/stops
+Headers:
+  - eurogps.eu.sid: 0e8f8d7a4cc333e2bbbf1b8f64bf4aae5cffc45b1ce44795
+Response:
+[
+  {
+    "id": 1803,
+    "areaId": 1,
+    "number": "1",
+    "name": "Битова техника (към Моста)",
+    "lat": 43.41754150390625,
+    "lon": 24.613998413085938,
+    "note": ""
+  },
+  {
+    "id": 1804,
+    "areaId": 1,
+    "number": "2",
+    "name": "Централна ЖП гара",
+    "lat": 43.42015075683594,
+    "lon": 24.614540100097656,
+    "note": ""
+  }
+]
+
+GET - http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/lines
+Headers:
+  - eurogps.eu.sid: 0e8f8d7a4cc333e2bbbf1b8f64bf4aae5cffc45b1ce44795
+Response:
+[
+  {
+    "id": 71,
+    "kind": "TROLLEY",
+    "number": "31",
+    "name": "Линия 31",
+    "nightly": false,
+    "routeIds": [
+      3134,
+      3135
+    ],
+    "type": "URBAN"
+  },
+  {
+    "id": 72,
+    "kind": "TROLLEY",
+    "number": "33",
+    "name": "Линия 33",
+    "nightly": false,
+    "routeIds": [
+      3137,
+      3163
+    ],
+    "type": "URBAN"
+  }
+]
+
+GET - http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/stop-lines
+Headers:
+  - eurogps.eu.sid: 0e8f8d7a4cc333e2bbbf1b8f64bf4aae5cffc45b1ce44795
+Response:
+[
+  {
+    "stopId": 1803,
+    "lineId": 51,
+    "routeId": 3080,
+    "remainingTime": []
+  },
+  {
+    "stopId": 1803,
+    "lineId": 71,
+    "routeId": 3134,
+    "remainingTime": []
+  }
+]
+
+GET - http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/stop-lines/$stopId$
+Headers:
+  - eurogps.eu.sid: 0e8f8d7a4cc333e2bbbf1b8f64bf4aae5cffc45b1ce44795
+Response:
+[
+  {
+    "stopId": 1804,
+    "lineId": 48,
+    "routeId": 3123,
+    "remainingTime": []
+  },
+  {
+    "stopId": 1804,
+    "lineId": 52,
+    "routeId": 3130,
+    "remainingTime": []
+  }
+]
+
+GET - http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/stop-times?rid=$routeId$&sid=$stopId$
+Headers:
+  - eurogps.eu.sid: 0e8f8d7a4cc333e2bbbf1b8f64bf4aae5cffc45b1ce44795
+Response (each value is a the seconds elapsed from 00:00):
+[
+  22210,
+  24010,
+  25810,
+  27610,
+  29410,
+  31210,
+  33010,
+  34810,
+  38410,
+  40210,
+  42010,
+  43810,
+  45610,
+  47410,
+  49210,
+  51010,
+  52810,
+  54610
+]
