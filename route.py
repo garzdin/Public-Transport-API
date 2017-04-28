@@ -22,6 +22,9 @@ def request(url):
     response = urlopen(request).read()
     return loads(response)
 
+def get_stop_times():
+    return request('http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/stop-lines/')
+
 
 class Graph:
     def __init__(self):
@@ -80,10 +83,10 @@ class Stop:
         self.name = name
         self.coordinates = coordinates
 
-    def __eq__(self, other):
-        return self.id == other.id and self.coordinates == other.coordinates
+    @property
+    def info(self):
+        from json import dumps
 
-    def get_info(self):
         data = request(stop_line_url.format(stop_id=self.id))
 
         info = []
@@ -93,10 +96,29 @@ class Stop:
                 'id': stop['stopId'],
                 'line': stop['lineId'],
                 'route': stop['routeId'],
-                'arrives_in': [seconds_to_minutes(seconds) for seconds in stop['remainingTime']]
+                'arrives_in': stop['remainingTime']
             })
 
-        return info
+        return dumps(info)
+
+    def at_line(line_id):
+        from json import dumps
+
+        data = request(stop_line_url.format(stop_id=self.id))
+
+        for stop in data:
+            if stop['line'] == line_id:
+                return dumps({
+                    'id': stop['stopId'],
+                    'line': stop['lineId'],
+                    'route': stop['routeId'],
+                    'arrives_in': stop['remainingTime']
+                })
+
+        return dumps({})
+
+    def __eq__(self, other):
+        return self.id == other.id and self.name == other.name and self.coordinates == other.coordinates
 
     def __str__(self):
         string = "Id: " + str(self.id) + "\n"
@@ -104,16 +126,19 @@ class Stop:
         string += "Coordinates: " + str(self.coordinates)
         return string
 
+
 class Route:
-    def __init__(self, id, stops):
+    def __init__(self, id, line, stops):
         self.id = id
+        self.line = line
         self.stops = stops
 
     def __eq__(self, other):
-        return self.id == other.id and self.stops == other.stops
+        return self.id == other.id and self.line == other.line and self.stops == other.stops
 
     def __str__(self):
         string = "Id: " + str(self.id) + "\n"
+        string += "Line: " + str(self.line) + "\n"
         string += "Stops: " + str(self.stops)
         return string
 
@@ -147,23 +172,57 @@ class Path:
 
         for route in data:
             id = route['id']
+            line = route['lineId']
             stops = []
             for stop_id in route['stopIds']:
                 stops.append(self.stops[stop_id])
-            routes[id] = Route(id, stops)
+            routes[id] = Route(id, line, stops)
 
         return routes
 
     def _create_graph(self):
         graph = Graph()
 
+        stop_times = get_stop_times()
+
         for route in self.routes.values():
             for stop in route.stops:
+                time_to_wait = 0.0
                 graph.add_vertex(stop.id)
+                arrives_in = [min(line['remainingTime']) for line in stop_times if line['remainingTime'] and line['stopId'] == stop.id and line['lineId'] == route.line and line['remainingTime'].count > 0]
+                if arrives_in:
+                    if arrives_in > 0 and arrives_in <= 10:
+                        time_to_wait = arrives_in / 10.0
+                    elif arrives_in > 10 and arrives_in <= 100:
+                        time_to_wait = arrives_in / 100.0
+                    elif arrives_in > 100 and arrives_in <= 1000:
+                        time_to_wait = arrives_in / 1000.0
+                    elif arrives_in > 1000 and arrives_in <= 10000:
+                        time_to_wait = arrives_in / 10000.0
+                    else:
+                        time_to_wait = 0.0
                 for vertex_stop in route.stops:
                     if vertex_stop not in [stop]:
                         distance = stop.coordinates.distance(vertex_stop.coordinates)
-                        graph.add_edge(stop.id, vertex_stop.id, distance)
+                        graph.add_edge(stop.id, vertex_stop.id, (distance - time_to_wait))
+
+
+        # for route in self.routes.values():
+        #         for stop in route.stops:
+        #             time_to_wait = 0.0
+        #             arrives_in = []
+        #             graph.add_vertex(stop.id)
+        #             for line in stop_times:
+        #                 if line['remainingTime'] and line['stopId'] == stop.id and line['lineId'] == route.line:
+        #                     for time in line['remainingTime']:
+        #                         arrives_in.append(time)
+        #             # arrives_in = [line['remainingTime'] for line in stop_times if  and line['remainingTime'].count > 0]
+        #             if arrives_in:
+        #                 time_to_wait = sum(arrives_in) / 10000
+        #             for vertex_stop in route.stops:
+        #                 if vertex_stop not in [stop]:
+        #                     distance = stop.coordinates.distance(vertex_stop.coordinates)
+        #                     graph.add_edge(stop.id, vertex_stop.id, (distance + time_to_wait))
 
         return graph
 
@@ -197,6 +256,7 @@ class Path:
         path.reverse()
         return path
 
-path = Path(1909, 1882)
-for stop in path.find_route():
-    print(stop.get_info())
+if __name__ == '__main__':
+    path = Path(1909, 1882)
+    for stop in path.find_route():
+        print(stop)
