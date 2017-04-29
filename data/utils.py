@@ -8,6 +8,7 @@ def seconds_to_minutes(seconds):
 def request(url):
     try:
         from urllib.request import Request, urlopen
+        from urllib.error import HTTPError
     except ModuleNotFoundError:
         from urllib2 import Request, urlopen
     except ModuleNotFoundError:
@@ -21,5 +22,12 @@ def request(url):
 
     request = Request(url, headers=headers)
 
-    response = urlopen(request).read()
-    return loads(response)
+    try:
+        response = urlopen(request).read()
+    except HTTPError as e:
+        return {
+            'error': str(e),
+            'message': str(e.read().decode("utf-8"))
+        }
+    else:
+        return loads(response)
