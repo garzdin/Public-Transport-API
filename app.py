@@ -3,6 +3,7 @@ from controllers.index import *
 from controllers.routes import *
 from controllers.stops import *
 from controllers.lines import *
+from controllers.time_of_arrival import *
 
 app = API()
 app.add_route('/', Index())
@@ -12,3 +13,5 @@ app.add_route('/stops', Stops())
 app.add_route('/stops/{id}', SingleStop())
 app.add_route('/lines', Lines())
 app.add_route('/lines/{id}', SingleLine())
+app.add_route('/eta', ETA())
+app.add_route('/eta/{id}', SingleETA())

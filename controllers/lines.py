@@ -5,14 +5,17 @@ from data.constants import lines_url
 
 __all__ = ['Lines', 'SingleLine']
 
+
 def get_lines():
     return request(lines_url)
+
 
 class Lines:
     def on_get(self, request, response):
         """Lines route for the application"""
         data = get_lines()
         response.body = dumps(data)
+
 
 class SingleLine:
     def on_get(self, request, response, id):

@@ -5,14 +5,17 @@ from data.constants import stops_url
 
 __all__ = ['Stops', 'SingleStop']
 
+
 def get_stops():
     return request(stops_url)
+
 
 class Stops:
     def on_get(self, request, response):
         """Stops route for the application"""
         data = get_stops()
         response.body = dumps(data)
+
 
 class SingleStop:
     def on_get(self, request, response, id):

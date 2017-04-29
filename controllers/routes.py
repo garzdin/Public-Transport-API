@@ -5,14 +5,17 @@ from data.constants import routes_url
 
 __all__ = ['Routes', 'SingleRoute']
 
+
 def get_routes():
     return request(routes_url)
+
 
 class Routes:
     def on_get(self, request, response):
         """Routes route for the application"""
         data = get_routes()
         response.body = dumps(data)
+
 
 class SingleRoute:
     def on_get(self, request, response, id):

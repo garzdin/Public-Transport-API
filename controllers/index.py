@@ -2,6 +2,7 @@ from json import dumps
 
 __all__ = ['Index']
 
+
 class Index:
     def on_get(self, request, response):
         """Index route for the application"""
