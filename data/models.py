@@ -179,10 +179,12 @@ class Path:
                 if arrives_in:
                     time_to_wait = sum(arrives_in) / 10000.0
                 graph.add_vertex(stop.id)
+                edges = 0.0
                 for vertex_stop in route.stops:
                     if vertex_stop not in [stop]:
+                        edges += 0.1
                         distance = stop.coordinates.distance(vertex_stop.coordinates)
-                        graph.add_edge(stop.id, vertex_stop.id, (distance + time_to_wait))
+                        graph.add_edge(stop.id, vertex_stop.id, (distance + time_to_wait + edges))
 
         return graph
 
