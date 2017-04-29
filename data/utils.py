@@ -6,8 +6,14 @@ def seconds_to_minutes(seconds):
     return "{minutes} minutes".format(minutes=strftime("%M:%S", gmtime(seconds)))
 
 def request(url):
-    from urllib2 import Request, urlopen
+    try:
+        from urllib.request import Request, urlopen
+    except ModuleNotFoundError:
+        from urllib2 import Request, urlopen
+    except ModuleNotFoundError:
+        from urllib3 import Request, urlopen
     from json import loads
+    from .constants import session_id_key, session_id
 
     headers = {}
 
