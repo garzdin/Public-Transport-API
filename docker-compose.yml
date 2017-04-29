@@ -2,7 +2,7 @@ version: '3'
 services:
   python:
     build: .
-    command: gunicorn -b 0.0.0.0:3000 app:api
+    command: gunicorn -b 0.0.0.0:3000 --reload app:app
     volumes:
       - .:/code
     ports:
