@@ -1,5 +1,6 @@
-from constants import *
-from utils import *
+from .constants import *
+from .utils import *
+from .serializers import *
 
 __all__ = ['Graph', 'Coordinates', 'Stop', 'Route', 'Path']
 
@@ -168,10 +169,10 @@ class Path:
                 time_to_wait = 0.0
                 arrives_in = []
                 for line in stop_times:
-                    if line['remainingTime'].count > 0 and line['stopId'] == stop.id and line['lineId'] == route.line:
+                    if line['remainingTime'] and line['stopId'] == stop.id and line['lineId'] == route.line:
                         for time in line['remainingTime']:
                             arrives_in.append(time)
-                if arrives_in.count > 0:
+                if arrives_in:
                     time_to_wait = sum(arrives_in) / 10000.0
                 graph.add_vertex(stop.id)
                 for vertex_stop in route.stops:
