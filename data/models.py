@@ -65,7 +65,7 @@ class Stop:
     def info(self):
         from json import dumps
 
-        data = request(stop_line_url.format(stop_id=self.id))
+        data = request(single_stop_lines_url.format(stop_id=self.id))
 
         info = []
 
@@ -82,7 +82,7 @@ class Stop:
     def at_line(line_id):
         from json import dumps
 
-        data = request(stop_line_url.format(stop_id=self.id))
+        data = request(single_stop_lines_url.format(stop_id=self.id))
 
         for stop in data:
             if stop['line'] == line_id:
@@ -161,7 +161,7 @@ class Path:
     def _create_graph(self):
         graph = Graph()
 
-        stop_times = request(lines_url)
+        stop_times = request(stop_lines_url)
 
         for route in self.routes.values():
             for stop in route.stops:
