@@ -2,7 +2,8 @@ session_id_key = 'eurogps.eu.sid'
 session_id = '0e8f8d7a4cc333e2bbbf1b8f64bf4aae5cffc45b1ce44795'
 stops_url = 'http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/stops'
 routes_url = 'http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/routes'
-stop_line_url = 'http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/stop-lines/{stop_id}'
+lines_url = 'http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/stop-lines/'
+stop_lines_url = 'http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/stop-lines/{stop_id}'
 
 def seconds_to_minutes(seconds):
     from time import strftime, gmtime
@@ -21,9 +22,6 @@ def request(url):
 
     response = urlopen(request).read()
     return loads(response)
-
-def get_stop_times():
-    return request('http://gtpl.asti.eurogps.eu:8080/rest-its/scheme/stop-lines/')
 
 
 class Graph:
@@ -87,7 +85,7 @@ class Stop:
     def info(self):
         from json import dumps
 
-        data = request(stop_line_url.format(stop_id=self.id))
+        data = request(stop_lines_url.format(stop_id=self.id))
 
         info = []
 
@@ -104,7 +102,7 @@ class Stop:
     def at_line(line_id):
         from json import dumps
 
-        data = request(stop_line_url.format(stop_id=self.id))
+        data = request(stop_lines_url.format(stop_id=self.id))
 
         for stop in data:
             if stop['line'] == line_id:
@@ -183,7 +181,7 @@ class Path:
     def _create_graph(self):
         graph = Graph()
 
-        stop_times = get_stop_times()
+        stop_times = request(lines_url)
 
         for route in self.routes.values():
             for stop in route.stops:
