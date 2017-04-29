@@ -188,45 +188,22 @@ class Path:
         for route in self.routes.values():
             for stop in route.stops:
                 time_to_wait = 0.0
+                arrives_in = []
+                for line in stop_times:
+                    if line['remainingTime'].count > 0 and line['stopId'] == stop.id and line['lineId'] == route.line:
+                        for time in line['remainingTime']:
+                            arrives_in.append(time)
+                if arrives_in.count > 0:
+                    time_to_wait = sum(arrives_in) / 10000.0
                 graph.add_vertex(stop.id)
-                arrives_in = [min(line['remainingTime']) for line in stop_times if line['remainingTime'] and line['stopId'] == stop.id and line['lineId'] == route.line and line['remainingTime'].count > 0]
-                if arrives_in:
-                    if arrives_in > 0 and arrives_in <= 10:
-                        time_to_wait = arrives_in / 10.0
-                    elif arrives_in > 10 and arrives_in <= 100:
-                        time_to_wait = arrives_in / 100.0
-                    elif arrives_in > 100 and arrives_in <= 1000:
-                        time_to_wait = arrives_in / 1000.0
-                    elif arrives_in > 1000 and arrives_in <= 10000:
-                        time_to_wait = arrives_in / 10000.0
-                    else:
-                        time_to_wait = 0.0
                 for vertex_stop in route.stops:
                     if vertex_stop not in [stop]:
                         distance = stop.coordinates.distance(vertex_stop.coordinates)
-                        graph.add_edge(stop.id, vertex_stop.id, (distance - time_to_wait))
-
-
-        # for route in self.routes.values():
-        #         for stop in route.stops:
-        #             time_to_wait = 0.0
-        #             arrives_in = []
-        #             graph.add_vertex(stop.id)
-        #             for line in stop_times:
-        #                 if line['remainingTime'] and line['stopId'] == stop.id and line['lineId'] == route.line:
-        #                     for time in line['remainingTime']:
-        #                         arrives_in.append(time)
-        #             # arrives_in = [line['remainingTime'] for line in stop_times if  and line['remainingTime'].count > 0]
-        #             if arrives_in:
-        #                 time_to_wait = sum(arrives_in) / 10000
-        #             for vertex_stop in route.stops:
-        #                 if vertex_stop not in [stop]:
-        #                     distance = stop.coordinates.distance(vertex_stop.coordinates)
-        #                     graph.add_edge(stop.id, vertex_stop.id, (distance + time_to_wait))
+                        graph.add_edge(stop.id, vertex_stop.id, (distance + time_to_wait))
 
         return graph
 
-    def find_route(self):
+    def find(self):
         visited = set()
 
         delta = dict.fromkeys(list(self.graph.vertices), float("inf"))
@@ -258,5 +235,5 @@ class Path:
 
 if __name__ == '__main__':
     path = Path(1909, 1882)
-    for stop in path.find_route():
+    for stop in path.find():
         print(stop)
