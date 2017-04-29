@@ -57,8 +57,10 @@ class Coordinates:
 
 
 class Stop:
-    def __init__(self, id, name, coordinates):
+    def __init__(self, id, name, coordinates, line=None, route=None):
         self.id = id
+        self.line = line
+        self.route = route
         self.name = name
         self.coordinates = coordinates
 
@@ -154,6 +156,8 @@ class Path:
             line = route['lineId']
             stops = []
             for stop_id in route['stopIds']:
+                self.stops[stop_id].route = id
+                self.stops[stop_id].line = line
                 stops.append(self.stops[stop_id])
             routes[id] = Route(id, line, stops)
 
