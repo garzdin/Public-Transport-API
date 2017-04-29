@@ -1,5 +1,5 @@
 from falcon import API
-from controllers import *
+from controllers.index import *
 
 api = API()
 api.add_route('/', Index())
