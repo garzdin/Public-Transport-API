@@ -126,10 +126,10 @@ class Route:
 
 
 class Path:
-    def __init__(self, start, end):
+    def __init__(self, start, end, stops=[]):
         self.start = start
         self.end = end
-        self.stops = self._get_stops()
+        self.stops = self._get_stops() if not stops else stops
         self.routes = self._get_routes()
         self.graph = self._create_graph()
 
