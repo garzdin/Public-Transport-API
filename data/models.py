@@ -170,21 +170,11 @@ class Path:
 
         for route in self.routes.values():
             for stop in route.stops:
-                time_to_wait = 0.0
-                arrives_in = []
-                for line in stop_times:
-                    if line['remainingTime'] and line['stopId'] == stop.id and line['lineId'] == route.line:
-                        for time in line['remainingTime']:
-                            arrives_in.append(time)
-                if arrives_in:
-                    time_to_wait = sum(arrives_in) / 10000.0
                 graph.add_vertex(stop.id)
-                edges = 0.0
                 for vertex_stop in route.stops:
                     if vertex_stop not in [stop]:
-                        edges += 0.1
                         distance = stop.coordinates.distance(vertex_stop.coordinates)
-                        graph.add_edge(stop.id, vertex_stop.id, (distance + time_to_wait + edges))
+                        graph.add_edge(stop.id, vertex_stop.id, distance)
 
         return graph
 
